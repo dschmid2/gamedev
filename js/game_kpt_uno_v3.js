@@ -89,11 +89,16 @@ class SceneGame extends Phaser.Scene {
         //lift1.body.velocity.y = -100;
         lift1.body.immovable = true;
         lift1.body.allowGravity = false;
+
+        var lift2 = this.physics.add.sprite(120+(6*128)+64, 600-25, 'floor');
+        lift2.setTint(0xaa0000);
+        lift2.body.immovable = true;
+        lift2.body.allowGravity = false;
         
         this.tweens.add({
-            targets: lift1,
+            targets: [ lift1, lift2 ],
             props: {
-                y: { value: 600-(4*90), duration: 4000 },
+                y: { value: 600-5-(4*90), duration: 4000 },
             },
             ease: 'Sine.easeInOut',
             yoyo: true,
@@ -138,6 +143,7 @@ class SceneGame extends Phaser.Scene {
         this.physics.add.collider(this.player, platforms);
         this.physics.add.collider(this.player, floorgroup);
         this.physics.add.collider(this.player, lift1);
+        this.physics.add.collider(this.player, lift2);
     }
     
     update ()
