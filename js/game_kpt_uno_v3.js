@@ -25,6 +25,10 @@ class SceneGame extends Phaser.Scene {
         //  A simple background for our game
         this.add.image(400, 300, 'sky').setScrollFactor(0).setScale(0.6);
     
+        var tileX = 128;
+        var tileY1 = 80;
+        var tileY2 = 10;
+        
         // configure levels for building
         var level = [ [[1, 2, 2, 2, 2, 2, 2, 2, 2, 2]] ,
                       [[2, 2, 1, 2, 2, 2, 2, 2, 2, 2]] ,
@@ -43,9 +47,9 @@ class SceneGame extends Phaser.Scene {
         // construct building facade
         for (var i=0; i<5; i++) 
         {
-            var map = this.make.tilemap({ data: level[i], tileWidth: 128, tileHeight: 80});
+            var map = this.make.tilemap({ data: level[i], tileWidth: tileX, tileHeight: tileY1});
             var tiles = map.addTilesetImage('uno');
-            var layer = map.createStaticLayer(0, tiles, 120, 600 - ((5-i)*90));
+            var layer = map.createStaticLayer(0, tiles, 120, 600 - (((tileY2/2)-i)*(tileY1+tileY2)));
         }
     
         // place the logos on the roof
@@ -68,8 +72,8 @@ class SceneGame extends Phaser.Scene {
         {
             for (var x=0; x<floors[y].length;x++)
             {
-                var posx = 120+64+(x*128);
-                var posy = 600-5-((5-y)*90);
+                var posx = 120+(tileX/2)+(x*tileX);
+                var posy = 600-(tileY2/2)-(((tileY2/2)-y)*(tileY1+tileY2));
                 if (floors[y][x] == 1)
                 {
                     floorgroup.create(posx, posy, 'floor');
@@ -84,13 +88,13 @@ class SceneGame extends Phaser.Scene {
     
         // add the lifts
         //var lifts = this.physics.add.staticGroup();
-        var lift1 = this.physics.add.sprite(120+(2*128)+64, 600-25, 'floor');
+        var lift1 = this.physics.add.sprite(120+(2*tileX)+64, 600-20, 'floor');
         lift1.setTint(0xaa0000);
         //lift1.body.velocity.y = -100;
         lift1.body.immovable = true;
         lift1.body.allowGravity = false;
 
-        var lift2 = this.physics.add.sprite(120+(6*128)+64, 600-25, 'floor');
+        var lift2 = this.physics.add.sprite(120+(6*tileX)+64, 600-20, 'floor');
         lift2.setTint(0xaa0000);
         lift2.body.immovable = true;
         lift2.body.allowGravity = false;
