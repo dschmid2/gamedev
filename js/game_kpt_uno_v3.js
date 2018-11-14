@@ -13,11 +13,11 @@ class SceneGame extends Phaser.Scene {
     {
         this.load.image('sky', 'assets/himmel.jpg');
         this.load.image('ground', 'assets/platform.png');
-        this.load.image('uno_bkg', 'assets/uno_full.png');
         this.load.image('logo_kpt_new', 'assets/KPT_neu.png');
     
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         this.load.image('uno', 'assets/uno_assets_2.png');
+        this.load.image('floor', 'assets/uno_floor_1.png');
     }
 
     create ()
@@ -33,6 +33,13 @@ class SceneGame extends Phaser.Scene {
                       [[3, 3, 0, 1, 3 ,3, 0 ,1, 2, 2]]
             ];
             
+        var floors = [ [1,1,1,1,1,1,1,1,1,1],
+                       [1,1,0,1,1,1,0,1,1,1],
+                       [1,1,0,1,1,1,0,1,1,1],
+                       [1,1,0,1,1,1,0,1,1,1],
+                       [1,1,0,1,1,1,0,1,1,1]
+                     ];
+        
         // construct building facade
         for (var i=0; i<5; i++) 
         {
@@ -47,12 +54,52 @@ class SceneGame extends Phaser.Scene {
         
         //  The platforms group contains the ground and the 2 ledges we can jump on
         let platforms = this.physics.add.staticGroup();
+        
+        
         //  Here we create the ground.
         //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
         var floor = platforms.create(400, 600, 'ground');
         floor.scaleX = 8;
         floor.refreshBody();
     
+        // add the levelfloors
+        var floorgroup = this.physics.add.staticGroup();
+        for (var y=0; y<floors.length;y++)
+        {
+            for (var x=0; x<floors[y].length;x++)
+            {
+                var posx = 120+64+(x*128);
+                var posy = 600-5-((5-y)*90);
+                if (floors[y][x] == 1)
+                {
+                    floorgroup.create(posx, posy, 'floor');
+                }
+                else
+                {
+                    var darkfloor = this.add.image(posx, posy, 'floor');
+                    darkfloor.setTint(0x444444);
+                }
+            }
+        }
+    
+        // add the lifts
+        //var lifts = this.physics.add.staticGroup();
+        var lift1 = this.physics.add.sprite(120+(2*128)+64, 600-25, 'floor');
+        lift1.setTint(0xaa0000);
+        //lift1.body.velocity.y = -100;
+        lift1.body.immovable = true;
+        lift1.body.allowGravity = false;
+        
+        this.tweens.add({
+            targets: lift1,
+            props: {
+                y: { value: 600-(4*90), duration: 4000 },
+            },
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1
+        });
+        
         // The player and its settings
         this.player = this.physics.add.sprite(100, 450, 'dude');
         this.player.setBounce(0.2);
@@ -89,7 +136,8 @@ class SceneGame extends Phaser.Scene {
     
         //  Collide the player and the stars with the platforms
         this.physics.add.collider(this.player, platforms);
-        
+        this.physics.add.collider(this.player, floorgroup);
+        this.physics.add.collider(this.player, lift1);
     }
     
     update ()
