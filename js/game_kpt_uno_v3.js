@@ -16,7 +16,7 @@ class SceneGame extends Phaser.Scene {
         this.load.image('logo_kpt_new', 'assets/KPT_neu.png');
     
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-        this.load.image('uno', 'assets/uno_assets_2.png');
+        this.load.image('uno', 'assets/uno_assets_2b.png');
         this.load.image('floor', 'assets/uno_floor_1.png');
     }
 
